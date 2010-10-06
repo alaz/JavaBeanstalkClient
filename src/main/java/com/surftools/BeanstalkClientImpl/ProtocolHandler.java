@@ -143,20 +143,22 @@ public class ProtocolHandler {
 		
 		try {
 			byte[] data = new byte[length];
+			// changes per alaz
 			int off = 0;
-			int toRead = length-off;
+			int toRead = length - off;
 			while (toRead > 0) {
 				int readLength = is.read( data, off, toRead);
-				if (readLength == -1)
-					throw new BeanstalkException(String.format("The end of InputStream is reached - %d bytes expected, %d bytes read", length, off+readLength) );
- 
+				if (readLength == -1) {
+					throw new BeanstalkException(String.format("The end of InputStream is reached - %d bytes expected, %d bytes read", length, off + readLength) );
+				}
 				off += readLength;
-				toRead = length-off;
+				toRead = length - off;
 			}
 			byte br = (byte)is.read();
 			byte bn = (byte)is.read();
-			if( br != '\r' || bn != '\n' ) 
+			if( br != '\r' || bn != '\n' ) {
 				throw new BeanstalkException( "The end of InputStream is reached - End of line expected, but not found" );
+			}
 			return data;
 			
 		} catch( IOException ex ) {
