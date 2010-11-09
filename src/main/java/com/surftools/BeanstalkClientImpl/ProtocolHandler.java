@@ -27,7 +27,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -54,30 +53,29 @@ public class ProtocolHandler {
 		validateRequest(request);
 		
 		Response response = null;
-		OutputStream os = null;
 		InputStream is = null;
 		PrintWriter out = null;
 
-		try {			
-			os = socket.getOutputStream();
-			out = new PrintWriter(os);
-
-			out.print(request.getCommand() + "\r\n");
-				if (request.getData() != null) {
-				out.flush();
-				os.write(request.getData());
-				out.print("\r\n");
+		try {
+			String command = request.getCommand() + "\r\n";
+			if (request.getData() != null) {
+				command += new String(request.getData());
+				command += "\r\n";
 			}
+
+			out = new PrintWriter(socket.getOutputStream());
+			out.write(command);
 			out.flush();
-			os.flush();
-							
+
 			is = socket.getInputStream();
-			String line = new String(readInputStream(is, 0 ));
-	
+			String line = new String(readInputStream(is, 0));
+
 			String[] tokens = line.split(" ");
 			if (tokens == null || tokens.length == 0) {
 				throw new BeanstalkException("no response");
 			}
+
+
 			
 			response = new Response();
 			response.setResponseLine(line);
