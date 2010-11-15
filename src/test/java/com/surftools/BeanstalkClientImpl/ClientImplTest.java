@@ -887,6 +887,7 @@ public class ClientImplTest extends TestCase {
 				client.delete(job.getJobId());
 
 				popWatchedTubes(client, tubeNames);
+				client.close();
 			}
 		}
 	}
